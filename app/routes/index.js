@@ -1,12 +1,18 @@
 const express = require("express");
-
 const router = express.Router();
-const authorRoutes = require("../routes/authorRoutes");
+const productsRouter = require("./products");
 
 router.get("/", (req, res) => {
-  res.status(200).json({ message: "From the API layer", success: true });
+  res.status(200).json({
+    message: "API is running",
+    metadata: {
+      hostname: req.hostname,
+      method: req.method,
+    },
+  });
 });
 
-router.use("/authors", authorRoutes);
+// Use the products router
+router.use("/products", productsRouter);
 
 module.exports = router;
