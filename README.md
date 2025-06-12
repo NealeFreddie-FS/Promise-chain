@@ -1,29 +1,107 @@
-# RESTful API with In-Memory Storage
+# Pokemon Explorer
 
 ## Overview
 
-This project implements a RESTful API with complete CRUD operations using Express.js. It uses in-memory data storage to maintain product information and demonstrates standard REST endpoints for managing resources.
+This application demonstrates using the Pokemon API with asynchronous JavaScript. It features a beautiful landing page where users can explore Pokemon, view their details, and save their favorites to a collection.
 
 ## Features
 
-- Complete CRUD operations (Create, Read, Update, Delete)
-- In-memory data storage implementation
-- RESTful API design with proper status codes
-- Detailed response metadata
-- JSON request/response format
+- Fetch Pokemon data using async/await from the Pokemon API
+- Display Pokemon in an attractive card layout
+- View detailed information including types, habitat, and descriptions
+- Save favorite Pokemon to a personal collection
+- Responsive design for all devices
+- Complete CRUD operations through API endpoints
 
-## Code Structure
+## Technology Stack
 
-- `server.js` - Entry point for the application
-- `app/index.js` - Express application setup
-- `app/routes/index.js` - Main router configuration
-- `app/routes/products.js` - Products resource endpoints
+- **Frontend**: HTML, CSS, JavaScript
+- **Backend**: Node.js, Express.js
+- **Data**: Pokemon API (https://pokeapi.co/)
+- **Storage**: In-memory data storage for saved Pokemon
+
+## Project Structure
+
+```
+├── server.js              # Application entry point
+├── src/                   # Source code
+│   ├── app.js             # Express application setup
+│   ├── config/            # Configuration files
+│   │   └── index.js       # Main configuration
+│   ├── api/               # API related code
+│   │   ├── controllers/   # Request handlers
+│   │   │   └── pokemonController.js
+│   │   ├── routes/        # API routes
+│   │   │   ├── index.js   # API router
+│   │   │   └── pokemonRoutes.js
+│   │   ├── services/      # Business logic
+│   │   │   └── pokemonService.js
+│   │   └── models/        # Data models
+│   └── public/            # Static assets
+│       ├── index.html     # Main landing page
+│       ├── css/           # Stylesheets
+│       │   └── styles.css
+│       └── js/            # Client-side JavaScript
+│           └── main.js
+```
+
+## API Endpoints
+
+- `GET /api/pokemon/random` - Get a random Pokemon
+- `GET /api/pokemon/:id` - Get a specific Pokemon by ID
+- `GET /api/pokemon/saved/all` - Get all saved Pokemon
+- `POST /api/pokemon/save` - Save a Pokemon to the collection
+- `DELETE /api/pokemon/saved/:id` - Remove a Pokemon from the collection
+
+## Implementation Details
+
+### Pokemon Data Service
+
+The project includes functions for interacting with the Pokemon API:
+
+#### `getPokemonData(id)`
+
+This async function:
+
+- Takes a Pokemon ID as input (1-151)
+- Makes an API call to get basic Pokemon data
+- Makes a second API call to get species data
+- Extracts and combines data from both endpoints
+- Returns a compiled object with all relevant Pokemon information
+
+#### `getRandomPokemon()`
+
+This async function:
+
+- Generates a random Pokemon ID between 1 and 151
+- Calls `getPokemonData()` with the random ID
+- Returns the Pokemon data
+
+### Data Format
+
+The Pokemon data is returned in the following format:
+
+```javascript
+{
+  id: 25,
+  name: "pikachu",
+  height: 0.4, // in meters
+  weight: 6.0, // in kilograms
+  types: ["electric"],
+  flavorText: "When several of these POKéMON gather, their electricity could build and cause lightning storms.",
+  habitat: "forest",
+  isLegendary: false
+}
+```
 
 ## Running the Project
 
-To run the server:
+To run the application:
 
 ```bash
+# Install dependencies
+npm install
+
 # Development mode with auto-restart
 npm run dev
 
@@ -31,170 +109,20 @@ npm run dev
 npm start
 ```
 
-## API Endpoints
+Then open your browser to http://localhost:3000 to view the application.
 
-### Root Endpoint
+## Credits
 
-- `GET /` - Returns "Service is up" message
+- Pokemon data provided by [PokeAPI](https://pokeapi.co/)
+- Pokemon images from the official Pokemon resources
+- This is a fan-made application for educational purposes
 
-### API Root
+## Setup Instructions
 
-- `GET /api` - Returns API status
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Create a `.env` file if needed (see configuration section)
+4. Start the server: `npm run dev`
+5. Open your browser and navigate to `http://localhost:3000`
 
-### Products Endpoints
-
-- `GET /api/products` - Retrieve all products
-- `GET /api/products/:id` - Retrieve a specific product by ID
-- `POST /api/products` - Create a new product
-- `PUT /api/products/:id` - Update a product by ID
-- `DELETE /api/products/:id` - Delete a product by ID
-
-## Request and Response Examples
-
-### Get All Products
-
-```
-GET http://localhost:3000/api/products
-```
-
-Response:
-
-```json
-{
-  "message": "Get all products",
-  "count": 3,
-  "data": [
-    { "id": 1, "name": "Laptop", "price": 1200, "category": "Electronics" },
-    { "id": 2, "name": "Smartphone", "price": 800, "category": "Electronics" },
-    { "id": 3, "name": "Headphones", "price": 150, "category": "Accessories" }
-  ],
-  "metadata": {
-    "hostname": "localhost",
-    "method": "GET"
-  }
-}
-```
-
-### Get Product by ID
-
-```
-GET http://localhost:3000/api/products/1
-```
-
-Response:
-
-```json
-{
-  "message": "GET product with ID 1",
-  "data": {
-    "id": 1,
-    "name": "Laptop",
-    "price": 1200,
-    "category": "Electronics"
-  },
-  "metadata": {
-    "hostname": "localhost",
-    "method": "GET"
-  }
-}
-```
-
-### Create New Product
-
-```
-POST http://localhost:3000/api/products
-Content-Type: application/json
-
-{
-  "name": "Monitor",
-  "price": 300,
-  "category": "Electronics"
-}
-```
-
-Response:
-
-```json
-{
-  "message": "Product created",
-  "data": {
-    "id": 4,
-    "name": "Monitor",
-    "price": 300,
-    "category": "Electronics"
-  },
-  "metadata": {
-    "hostname": "localhost",
-    "method": "POST"
-  }
-}
-```
-
-### Update Product
-
-```
-PUT http://localhost:3000/api/products/2
-Content-Type: application/json
-
-{
-  "name": "Smartphone Pro",
-  "price": 1000,
-  "category": "Electronics"
-}
-```
-
-Response:
-
-```json
-{
-  "message": "Updated product with ID 2",
-  "data": {
-    "id": 2,
-    "name": "Smartphone Pro",
-    "price": 1000,
-    "category": "Electronics"
-  },
-  "metadata": {
-    "hostname": "localhost",
-    "method": "PUT"
-  }
-}
-```
-
-### Delete Product
-
-```
-DELETE http://localhost:3000/api/products/3
-```
-
-Response:
-
-```json
-{
-  "message": "Deleted product with ID 3",
-  "data": {
-    "id": 3,
-    "name": "Headphones",
-    "price": 150,
-    "category": "Accessories"
-  },
-  "metadata": {
-    "hostname": "localhost",
-    "method": "DELETE"
-  }
-}
-```
-
-## Implementation Details
-
-### In-Memory Data Storage
-
-The application uses an in-memory array to store product data. This data persists only for the lifetime of the server process. In a production environment, this would be replaced with a database.
-
-### Response Format
-
-All API responses follow a consistent format:
-
-- `message`: Description of the operation result
-- `data`: The requested resource data (when applicable)
-- `metadata`: Additional information about the request
+**IMPORTANT**: This application must be accessed through the Node.js server at `http://localhost:3000` and NOT through VS Code's Live Server extension (which uses port 5500). The frontend depends on API endpoints served by the Node.js backend.
